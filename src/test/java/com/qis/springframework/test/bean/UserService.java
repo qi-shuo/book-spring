@@ -9,6 +9,8 @@ import lombok.ToString;
 @ToString
 public class UserService {
     private String name;
+    private String uid;
+    private UserDao userDao;
 
     public String getName() {
         return name;
@@ -16,6 +18,22 @@ public class UserService {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public UserService(String name) {
@@ -26,9 +44,7 @@ public class UserService {
 
     }
 
-
     public void queryUserInfo() {
-        System.out.println("查询用户信息");
+        System.out.println(userDao.queryUserName(uid));
     }
-
 }

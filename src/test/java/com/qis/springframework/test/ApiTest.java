@@ -1,8 +1,12 @@
 package com.qis.springframework.test;
 
+import com.qis.springframework.beans.PropertyValue;
+import com.qis.springframework.beans.PropertyValues;
 import com.qis.springframework.beans.factory.BeanFactory;
 import com.qis.springframework.beans.factory.config.BeanDefinition;
+import com.qis.springframework.beans.factory.config.BeanReference;
 import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
+import com.qis.springframework.test.bean.UserDao;
 import com.qis.springframework.test.bean.UserService;
 import org.junit.Test;
 
@@ -39,6 +43,30 @@ public class ApiTest {
         beanFactory.registryBeanDefinition("userService", beanDefinition);
         UserService userService = (UserService) beanFactory.getBean("userService", "qis");
         System.out.println(userService);
+        userService.queryUserInfo();
+    }
+
+    /**
+     * 测试bean工厂设置属性
+     */
+    @Test
+    public void testBeanFactoryPropertyValue() {
+        DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
+
+        //设置属性
+        PropertyValues propertyValues = new PropertyValues();
+        propertyValues.addPropertyValue(new PropertyValue("uid", "10001"));
+        propertyValues.addPropertyValue(new PropertyValue("userDao", new BeanReference("userDao")));
+        //设置userService的beanDefinition
+        BeanDefinition userSeriveBeanDefinition = new BeanDefinition(UserService.class, propertyValues);
+        //注册userService的beanDefinition
+        defaultListableBeanFactory.registryBeanDefinition("userService", userSeriveBeanDefinition);
+
+        BeanDefinition userDaoBeanDefinition = new BeanDefinition(UserDao.class);
+        defaultListableBeanFactory.registryBeanDefinition("userDao", userDaoBeanDefinition);
+
+        UserService userService = (UserService) defaultListableBeanFactory.getBean("userService");
+
         userService.queryUserInfo();
     }
 }
