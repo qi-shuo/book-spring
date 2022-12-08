@@ -28,4 +28,17 @@ public class ApiTest {
         System.out.println(userService1);
 
     }
+
+    /**
+     * 测试带有构造函数的bean创建
+     */
+    @Test
+    public void testBeanFactoryArgs() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
+        beanFactory.registryBeanDefinition("userService", beanDefinition);
+        UserService userService = (UserService) beanFactory.getBean("userService", "qis");
+        System.out.println(userService);
+        userService.queryUserInfo();
+    }
 }
