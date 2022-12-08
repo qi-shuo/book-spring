@@ -27,4 +27,15 @@ public interface BeanFactory {
      * @throws BeansException 抛出异常
      */
     Object getBean(String beanName, Object... args) throws BeansException;
+
+    /**
+     * 返回指定泛型的对象
+     *
+     * @param beanName     要检索的beanName
+     * @param requiredType 类型
+     * @param <T>          泛型
+     * @return 实例化的Bean对象
+     * @throws BeansException 不能获取Bean对象,则抛出异常
+     */
+    <T> T getBean(String beanName, Class<T> requiredType) throws BeansException;
 }

@@ -11,6 +11,7 @@ public class UserService {
     private String name;
     private String uid;
     private UserDao userDao;
+    private String location;
 
     public String getName() {
         return name;
@@ -46,5 +47,13 @@ public class UserService {
 
     public String queryUserInfo() {
         return userDao.queryUserName(uid);
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

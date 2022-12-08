@@ -24,4 +24,19 @@ public interface BeanDefinitionRegistry {
      * @return
      */
     boolean containsBeanDefinition(String beanName);
+
+    /**
+     * 获取bean定义
+     *
+     * @param beanName
+     * @return
+     */
+    BeanDefinition getBeanDefinition(String beanName);
+
+    /**
+     * 返回注册表中所用bean名称
+     *
+     * @return
+     */
+    String[] getBeanDefinitionNames();
 }

@@ -8,6 +8,8 @@ import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.qis.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.qis.springframework.test.bean.UserDao;
 import com.qis.springframework.test.bean.UserService;
+import com.qis.springframework.test.common.MyBeanFactoryPostProcessor;
+import com.qis.springframework.test.common.MyBeanPostProcessor;
 import org.junit.Test;
 
 /**
@@ -70,6 +72,9 @@ public class ApiTest {
         System.out.println(userService.queryUserInfo());
     }
 
+    /**
+     * 加载beanFactory通过xml加载BeanDefinition
+     */
     @Test
     public void testBeanFactoryXml() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
@@ -79,5 +84,29 @@ public class ApiTest {
         UserService userService = (UserService) beanFactory.getBean("userService");
         //测试结果
         System.out.println("测试结果:" + userService.queryUserInfo());
+    }
+
+    /**
+     * 测试bean的后置处理器,包括BeanFactoryPostProcessor和BeanPostProcessor
+     */
+    @Test
+    public void testBeanFactoryPostProcessor() {
+        //创建BeanFactory并加载xml
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinitions("classpath:spring.xml");
+
+        //创建BeanFactoryPostProcessor并执行
+        MyBeanFactoryPostProcessor myBeanFactoryPostProcessor = new MyBeanFactoryPostProcessor();
+        myBeanFactoryPostProcessor.postProcessorBeanFactory(beanFactory);
+
+        //创建BeanPostProcessor并添加到工厂中
+        MyBeanPostProcessor myBeanPostProcessor = new MyBeanPostProcessor();
+        beanFactory.addBeanPostProcessor(myBeanPostProcessor);
+
+        UserService userService = beanFactory.getBean("userService", UserService.class);
+
+        System.out.println("测试结果：" + userService.queryUserInfo());
+        System.out.println("测试结果：" + userService);
     }
 }
