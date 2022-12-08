@@ -26,8 +26,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return beanDefinition;
     }
 
+    /**
+     * spring的注册逻辑会判断BeanDefinition是否允许覆盖等
+     * @param beanName       bean名称
+     * @param beanDefinition bean定义
+     */
     @Override
-    public void registryBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
         beanDefinitionMap.put(beanName, beanDefinition);
+    }
+
+    @Override
+    public boolean containsBeanDefinition(String beanName) {
+        return beanDefinitionMap.containsKey(beanName);
     }
 }

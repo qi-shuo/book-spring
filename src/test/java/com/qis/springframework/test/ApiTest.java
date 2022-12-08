@@ -2,10 +2,10 @@ package com.qis.springframework.test;
 
 import com.qis.springframework.beans.PropertyValue;
 import com.qis.springframework.beans.PropertyValues;
-import com.qis.springframework.beans.factory.BeanFactory;
 import com.qis.springframework.beans.factory.config.BeanDefinition;
 import com.qis.springframework.beans.factory.config.BeanReference;
 import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
+import com.qis.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.qis.springframework.test.bean.UserDao;
 import com.qis.springframework.test.bean.UserService;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class ApiTest {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         //定义BeanDefinition并且注册
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
-        beanFactory.registryBeanDefinition("userService", beanDefinition);
+        beanFactory.registerBeanDefinition("userService", beanDefinition);
         //第一次获取bean
         UserService userService = (UserService) beanFactory.getBean("userService");
         userService.queryUserInfo();
@@ -40,10 +40,10 @@ public class ApiTest {
     public void testBeanFactoryArgs() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
-        beanFactory.registryBeanDefinition("userService", beanDefinition);
+        beanFactory.registerBeanDefinition("userService", beanDefinition);
         UserService userService = (UserService) beanFactory.getBean("userService", "qis");
         System.out.println(userService);
-        userService.queryUserInfo();
+        System.out.println(userService.queryUserInfo());
     }
 
     /**
@@ -60,13 +60,24 @@ public class ApiTest {
         //设置userService的beanDefinition
         BeanDefinition userSeriveBeanDefinition = new BeanDefinition(UserService.class, propertyValues);
         //注册userService的beanDefinition
-        defaultListableBeanFactory.registryBeanDefinition("userService", userSeriveBeanDefinition);
+        defaultListableBeanFactory.registerBeanDefinition("userService", userSeriveBeanDefinition);
 
         BeanDefinition userDaoBeanDefinition = new BeanDefinition(UserDao.class);
-        defaultListableBeanFactory.registryBeanDefinition("userDao", userDaoBeanDefinition);
+        defaultListableBeanFactory.registerBeanDefinition("userDao", userDaoBeanDefinition);
 
         UserService userService = (UserService) defaultListableBeanFactory.getBean("userService");
 
-        userService.queryUserInfo();
+        System.out.println(userService.queryUserInfo());
+    }
+
+    @Test
+    public void testBeanFactoryXml() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinitions("classpath:spring.xml");
+
+        UserService userService = (UserService) beanFactory.getBean("userService");
+        //测试结果
+        System.out.println("测试结果:" + userService.queryUserInfo());
     }
 }
