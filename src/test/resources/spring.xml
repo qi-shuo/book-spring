@@ -5,4 +5,7 @@
         <property name="uid" value="10001"/>
         <property name="userDao" ref="userDao"/>
     </bean>
+    <!--    后置处理器-->
+    <bean class="com.qis.springframework.test.common.MyBeanPostProcessor"/>
+    <bean class="com.qis.springframework.test.common.MyBeanFactoryPostProcessor"/>
 </beans>

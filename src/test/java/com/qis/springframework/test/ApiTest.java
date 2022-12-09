@@ -6,6 +6,7 @@ import com.qis.springframework.beans.factory.config.BeanDefinition;
 import com.qis.springframework.beans.factory.config.BeanReference;
 import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.qis.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import com.qis.springframework.context.support.ClassPathXmlApplicationContext;
 import com.qis.springframework.test.bean.UserDao;
 import com.qis.springframework.test.bean.UserService;
 import com.qis.springframework.test.common.MyBeanFactoryPostProcessor;
@@ -108,5 +109,19 @@ public class ApiTest {
 
         System.out.println("测试结果：" + userService.queryUserInfo());
         System.out.println("测试结果：" + userService);
+    }
+
+    @Test
+    public void testApplicationContext(){
+        ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        UserService userService = classPathXmlApplicationContext.getBean("userService", UserService.class);
+        System.out.println(userService);
+        System.out.println(userService.queryUserInfo());
+
+        UserService userService1 = classPathXmlApplicationContext.getBean("userService", UserService.class);
+        System.out.println(userService1);
+        System.out.println(userService1.queryUserInfo());
+
+
     }
 }
