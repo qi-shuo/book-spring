@@ -112,7 +112,7 @@ public class ApiTest {
     }
 
     @Test
-    public void testApplicationContext(){
+    public void testApplicationContext() {
         ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
         UserService userService = classPathXmlApplicationContext.getBean("userService", UserService.class);
         System.out.println(userService);
@@ -122,6 +122,20 @@ public class ApiTest {
         System.out.println(userService1);
         System.out.println(userService1.queryUserInfo());
 
+
+    }
+
+    /**
+     * 测试bean初始化方法和bean的销毁方法
+     */
+    @Test
+    public void testInitAndDisposable() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        //注册钩子方法
+        applicationContext.registerShutdownHook();
+        UserService userService = applicationContext.getBean("userService", UserService.class);
+        String result = userService.queryUserInfo();
+        System.out.println("测试结果：" + result);
 
     }
 }

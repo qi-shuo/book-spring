@@ -19,7 +19,7 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
 
-        System.out.println("BeanPostProcessor,初始化之后的后置处理器执行");
+        System.out.println(beanName + "BeanPostProcessor,初始化之后的后置处理器执行");
 
         return bean;
     }
