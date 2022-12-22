@@ -7,6 +7,7 @@ import com.qis.springframework.beans.factory.config.BeanReference;
 import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.qis.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.qis.springframework.context.support.ClassPathXmlApplicationContext;
+import com.qis.springframework.test.bean.IUserDao;
 import com.qis.springframework.test.bean.UserDao;
 import com.qis.springframework.test.bean.UserService;
 import com.qis.springframework.test.common.MyBeanFactoryPostProcessor;
@@ -139,11 +140,12 @@ public class ApiTest {
 
     }
 
+    /**
+     * 测试xxxAware相关感知接口
+     */
     @Test
     public void testAware() {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-        //注册钩子方法
-
         UserService userService = applicationContext.getBean("userService", UserService.class);
         String result = userService.queryUserInfo();
 
@@ -151,5 +153,33 @@ public class ApiTest {
 
         System.out.println("ApplicationContextAware：" + userService.getApplicationContext());
         System.out.println("BeanFactoryAware：" + userService.getBeanFactory());
+    }
+
+    /**
+     * 测试多例bean
+     */
+    @Test
+    public void testPrototype() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        UserService userService1 = applicationContext.getBean("userService", UserService.class);
+        UserService userService2 = applicationContext.getBean("userService", UserService.class);
+        System.out.println(userService1.hashCode());
+        System.out.println(userService2.hashCode());
+    }
+
+    /**
+     * 测试FactoryBean
+     */
+    @Test
+    public void testFactoryBean() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        UserDao userDao = applicationContext.getBean("userDao", UserDao.class);
+        UserDao userDao1 = applicationContext.getBean("userDao", UserDao.class);
+
+        System.out.println(userDao.queryUserName("10001"));
+        System.out.println(userDao.equals(userDao1));
+
+        System.out.println(userDao);
+        System.out.println(userDao1);
     }
 }

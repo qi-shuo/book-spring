@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
-    <bean id="userDao" class="com.qis.springframework.test.bean.UserDao"/>
-    <bean id="userService" class="com.qis.springframework.test.bean.UserService">
+<!--    <bean id="userDao" class="com.qis.springframework.test.bean.UserDao"/>-->
+    <bean id="userService" class="com.qis.springframework.test.bean.UserService" scope="prototype">
         <property name="uid" value="10001"/>
         <property name="userDao" ref="userDao"/>
     </bean>
     <!--    后置处理器-->
     <bean class="com.qis.springframework.test.common.MyBeanPostProcessor"/>
     <bean class="com.qis.springframework.test.common.MyBeanFactoryPostProcessor"/>
+
+    <bean id="proxyUserDao" class="com.qis.springframework.test.bean.ProxyFactoryBean"/>
+    <bean id="userDao" class="com.qis.springframework.test.bean.UserDaoFactoryBean"/>
+
 </beans>

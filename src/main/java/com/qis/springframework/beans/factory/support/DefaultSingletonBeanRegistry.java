@@ -17,6 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     /**
+     * 空单例对象的内部标记：用作并发映射（不支持空值）的标记值。
+     */
+    protected static final Object NULL_OBJECT = new Object();
+
+    /**
      * 单例bean存储map
      */
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>();

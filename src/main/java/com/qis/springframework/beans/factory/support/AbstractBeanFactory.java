@@ -1,6 +1,7 @@
 package com.qis.springframework.beans.factory.support;
 
 import com.qis.springframework.beans.BeansException;
+import com.qis.springframework.beans.factory.FactoryBean;
 import com.qis.springframework.beans.factory.config.BeanDefinition;
 import com.qis.springframework.beans.factory.config.BeanPostProcessor;
 import com.qis.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -16,7 +17,7 @@ import java.util.Objects;
  * @author: qishuo
  * @date: 2022/12/5 18:48
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
     /**
      * ClassLoader to resolve bean class names with, if necessary
@@ -41,12 +42,33 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
     protected <T> T doGetBean(final String beanName, final Object[] args) {
-        Object bean = getSingleton(beanName);
-        if (Objects.nonNull(bean)) {
-            return (T) bean;
+        Object sharedInstance = getSingleton(beanName);
+        if (Objects.nonNull(sharedInstance)) {
+            // 如果是 FactoryBean，则需要调用 FactoryBean#getObject
+            return (T) getObjectForBeanInstance(sharedInstance, beanName);
         }
         BeanDefinition beanDefinition = getBeanDefinition(beanName);
-        return (T) createBean(beanName, beanDefinition, args);
+        Object bean = createBean(beanName, beanDefinition, args);
+        return (T) getObjectForBeanInstance(bean, beanName);
+    }
+
+    /**
+     * 对FactoryBean的支持
+     *
+     * @param beanInstance
+     * @param beanName
+     * @return
+     */
+    private Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        if (!(beanInstance instanceof FactoryBean)) {
+            return beanInstance;
+        }
+        Object object = getCachedObjectForFactoryBean(beanName);
+        if (object == null) {
+            FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
+            object = getObjectFromFactoryBean(factoryBean, beanName);
+        }
+        return object;
     }
 
     /**
@@ -79,6 +101,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return beanPostProcessors;
     }
+
     public ClassLoader getBeanClassLoader() {
         return this.beanClassLoader;
     }

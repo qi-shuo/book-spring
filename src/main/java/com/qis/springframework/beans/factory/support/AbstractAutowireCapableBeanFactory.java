@@ -45,8 +45,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         //Spring源码中bean的作用域为多例的情况不会注册销毁方法,也就是多例情况Spring不会管理Bean的销毁方法,只有单例的情况Spring才会管理,或者是自定义的作用域或注册一个销毁的回调
         //Spring会管理多例bean的初始化方法
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
-        //注册单例bean,功能继承DefaultSingletonBeanRegistry
-        registerSingleton(beanName, bean);
+        //判断是否是单例bean,注册单例bean,功能继承DefaultSingletonBeanRegistry
+        if (beanDefinition.isSingleton()) {
+            registerSingleton(beanName, bean);
+        }
         return bean;
     }
 
