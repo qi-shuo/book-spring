@@ -1,7 +1,9 @@
 package com.qis.springframework.test.bean;
 
-import com.qis.springframework.beans.factory.DisposableBean;
-import com.qis.springframework.beans.factory.InitializingBean;
+import com.qis.springframework.beans.BeansException;
+import com.qis.springframework.beans.factory.*;
+import com.qis.springframework.context.ApplicationContext;
+import com.qis.springframework.context.ApplicationContextAware;
 import lombok.ToString;
 
 /**
@@ -9,11 +11,14 @@ import lombok.ToString;
  * @date: 2022/12/5 19:10
  */
 @ToString
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements InitializingBean, DisposableBean, BeanNameAware, BeanClassLoaderAware, ApplicationContextAware, BeanFactoryAware {
     private String name;
     private String uid;
     private UserDao userDao;
     private String location;
+
+    private ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
 
     public String getName() {
         return name;
@@ -69,12 +74,34 @@ public class UserService implements InitializingBean, DisposableBean {
         System.out.println("执行了初始化方法afterPropertiesSet");
     }
 
-    public void initDataMethod() {
-        System.out.println("执行：init-method");
 
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("classLoader：" + classLoader);
     }
 
-    public void destroyDataMethod() {
-        System.out.println("DisposableBean.执行：destroy-method");
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        System.out.println("setBeanFactory 执行" );
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        System.out.println("Bean Name is：" + name);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        System.out.println("setApplicationContext 执行" );
+        this.applicationContext = applicationContext;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
     }
 }

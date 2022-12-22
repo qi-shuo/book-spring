@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
     <bean id="userDao" class="com.qis.springframework.test.bean.UserDao"/>
-    <bean id="userService" class="com.qis.springframework.test.bean.UserService" init-method="initDataMethod"
-          destroy-method="destroyDataMethod">
+    <bean id="userService" class="com.qis.springframework.test.bean.UserService">
         <property name="uid" value="10001"/>
         <property name="userDao" ref="userDao"/>
     </bean>
