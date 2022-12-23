@@ -12,4 +12,10 @@
     <bean id="proxyUserDao" class="com.qis.springframework.test.bean.ProxyFactoryBean"/>
     <bean id="userDao" class="com.qis.springframework.test.bean.UserDaoFactoryBean"/>
 
+
+    <bean class="com.qis.springframework.test.event.ContextRefreshedEventListener"/>
+
+    <bean class="com.qis.springframework.test.event.CustomEventListener"/>
+
+    <bean class="com.qis.springframework.test.event.ContextClosedEventListener"/>
 </beans>

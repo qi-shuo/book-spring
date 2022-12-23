@@ -6,13 +6,23 @@ import com.qis.springframework.beans.factory.config.BeanDefinition;
 import com.qis.springframework.beans.factory.config.BeanReference;
 import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.qis.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import com.qis.springframework.context.ApplicationListener;
 import com.qis.springframework.context.support.ClassPathXmlApplicationContext;
 import com.qis.springframework.test.bean.IUserDao;
 import com.qis.springframework.test.bean.UserDao;
 import com.qis.springframework.test.bean.UserService;
 import com.qis.springframework.test.common.MyBeanFactoryPostProcessor;
 import com.qis.springframework.test.common.MyBeanPostProcessor;
+import com.qis.springframework.test.event.ContextClosedEventListener;
+import com.qis.springframework.test.event.CustomEvent;
+import com.qis.springframework.util.ClassUtils;
 import org.junit.Test;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author: qishuo
@@ -181,5 +191,37 @@ public class ApiTest {
 
         System.out.println(userDao);
         System.out.println(userDao1);
+    }
+
+    /**
+     * 测试事件广播和监听
+     */
+    @Test
+    public void testLister() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 1019129009086763L, "成功了！"));
+        applicationContext.registerShutdownHook();
+    }
+
+    /**
+     * 测试获取泛型
+     */
+    public static class QisList extends ArrayList<String> {
+
+    }
+    /**
+     * 测试泛型
+     */
+    @Test
+    public void testGeneric() throws ClassNotFoundException {
+        QisList strings = new QisList();
+        Class<? extends List> listenerClass = strings.getClass();
+        // 按照 CglibSubclassingInstantiationStrategy、SimpleInstantiationStrategy 不同的实例化类型，需要判断后获取目标 class
+        Class<?> targertClass = ClassUtils.isCglibProxyClass(listenerClass) ? listenerClass.getSuperclass() : listenerClass;
+
+        Type genericSuperclass = targertClass.getGenericSuperclass();
+        Type actualTypeArgument = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+        String className = actualTypeArgument.getTypeName();
+        System.out.println(className);
     }
 }
