@@ -1,5 +1,10 @@
 package com.qis.springframework.test;
 
+import com.qis.springframework.aop.AdvisedSupport;
+import com.qis.springframework.aop.TargetSource;
+import com.qis.springframework.aop.aspectj.AspectJExpressionPointcut;
+import com.qis.springframework.aop.framework.CglibAopProxy;
+import com.qis.springframework.aop.framework.JdkDynamicAopProxy;
 import com.qis.springframework.beans.PropertyValue;
 import com.qis.springframework.beans.PropertyValues;
 import com.qis.springframework.beans.factory.config.BeanDefinition;
@@ -8,9 +13,7 @@ import com.qis.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.qis.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import com.qis.springframework.context.ApplicationListener;
 import com.qis.springframework.context.support.ClassPathXmlApplicationContext;
-import com.qis.springframework.test.bean.IUserDao;
-import com.qis.springframework.test.bean.UserDao;
-import com.qis.springframework.test.bean.UserService;
+import com.qis.springframework.test.bean.*;
 import com.qis.springframework.test.common.MyBeanFactoryPostProcessor;
 import com.qis.springframework.test.common.MyBeanPostProcessor;
 import com.qis.springframework.test.event.ContextClosedEventListener;
@@ -18,6 +21,7 @@ import com.qis.springframework.test.event.CustomEvent;
 import com.qis.springframework.util.ClassUtils;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -209,6 +213,7 @@ public class ApiTest {
     public static class QisList extends ArrayList<String> {
 
     }
+
     /**
      * 测试泛型
      */
@@ -224,4 +229,45 @@ public class ApiTest {
         String className = actualTypeArgument.getTypeName();
         System.out.println(className);
     }
+
+    /**
+     * 测试AOP中的ClassFilter和MethodMatcher
+     *
+     * @throws NoSuchMethodException
+     */
+    @Test
+    public void test_aop() throws NoSuchMethodException {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut("execution(* com.qis.springframework.test.bean.UserService.*(..))");
+
+        Class<UserService> clazz = UserService.class;
+        Method method = clazz.getDeclaredMethod("queryUserInfo");
+
+        System.out.println(pointcut.matches(clazz));
+        System.out.println(pointcut.matches(method, clazz));
+    }
+
+    /**
+     * 测试AOP代理
+     */
+    @Test
+    public void test_dynamic() {
+        // 目标对象
+        IUserService userService = new UserService();
+        // 组装代理信息
+        AdvisedSupport advisedSupport = new AdvisedSupport();
+        advisedSupport.setTargetSource(new TargetSource(userService));
+        advisedSupport.setMethodInterceptor(new UserServiceInterceptor());
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut("execution(* com.qis.springframework.test.bean.IUserService.*(..))"));
+
+        // 代理对象(JdkDynamicAopProxy)
+        IUserService proxy_jdk = (IUserService) new JdkDynamicAopProxy(advisedSupport).getProxy();
+        // 测试调用
+        System.out.println("测试结果：" + proxy_jdk.queryUserInfo());
+
+        // 代理对象(Cglib2AopProxy)
+        IUserService proxy_cglib = (IUserService) new CglibAopProxy(advisedSupport).getProxy();
+        // 测试调用
+        System.out.println("测试结果：" + proxy_cglib.register("花花"));
+    }
+
 }

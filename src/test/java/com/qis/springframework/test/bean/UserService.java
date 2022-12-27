@@ -11,7 +11,7 @@ import lombok.ToString;
  * @date: 2022/12/5 19:10
  */
 @ToString
-public class UserService implements InitializingBean, DisposableBean, BeanNameAware, BeanClassLoaderAware, ApplicationContextAware, BeanFactoryAware {
+public class UserService implements IUserService, InitializingBean, DisposableBean, BeanNameAware, BeanClassLoaderAware, ApplicationContextAware, BeanFactoryAware {
     private String name;
     private String uid;
     private UserDao userDao;
@@ -52,8 +52,14 @@ public class UserService implements InitializingBean, DisposableBean, BeanNameAw
 
     }
 
+    @Override
     public String queryUserInfo() {
-        return userDao.queryUserName(uid);
+        return "qis";
+    }
+
+    @Override
+    public String register(String userName) {
+        return userName;
     }
 
     public String getLocation() {
@@ -82,7 +88,7 @@ public class UserService implements InitializingBean, DisposableBean, BeanNameAw
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        System.out.println("setBeanFactory 执行" );
+        System.out.println("setBeanFactory 执行");
         this.beanFactory = beanFactory;
     }
 
@@ -93,7 +99,7 @@ public class UserService implements InitializingBean, DisposableBean, BeanNameAw
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        System.out.println("setApplicationContext 执行" );
+        System.out.println("setApplicationContext 执行");
         this.applicationContext = applicationContext;
     }
 
