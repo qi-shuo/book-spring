@@ -6,6 +6,8 @@ import com.qis.springframework.context.ApplicationContext;
 import com.qis.springframework.context.ApplicationContextAware;
 import lombok.ToString;
 
+import java.util.Random;
+
 /**
  * @author: qishuo
  * @date: 2022/12/5 19:10
@@ -54,6 +56,11 @@ public class UserService implements IUserService, InitializingBean, DisposableBe
 
     @Override
     public String queryUserInfo() {
+        try {
+            Thread.sleep(new Random(1).nextInt(100));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return "qis";
     }
 

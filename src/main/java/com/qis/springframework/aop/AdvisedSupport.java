@@ -10,6 +10,14 @@ import org.aopalliance.intercept.MethodInterceptor;
  */
 public class AdvisedSupport {
     /**
+     * proxyConfig
+     * true使用cglib创建代理对象
+     * false使用jdk创建代理对象
+     * Spring源码默认使用jdk,但是在SpringBoot2.0版本默认使用cglib
+     * 参考文章:<a href="https://www.51cto.com/article/717741.html">...</a>
+     */
+    private boolean proxyTargetClass = false;
+    /**
      * 被代理的目标对象
      */
     private TargetSource targetSource;
@@ -44,5 +52,13 @@ public class AdvisedSupport {
 
     public void setMethodMatcher(MethodMatcher methodMatcher) {
         this.methodMatcher = methodMatcher;
+    }
+
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
+    }
+
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
     }
 }
